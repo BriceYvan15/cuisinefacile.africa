@@ -11,6 +11,17 @@ import {
 } from 'lucide-react';
 import { HOW_IT_WORKS, RECIPES } from '../constants';
 
+// Style personnalisé pour masquer la barre de défilement
+const scrollbarStyle = `
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`;
+
 interface HomeProps {
   onNavigate: (page: string, params?: any) => void;
 }
@@ -157,7 +168,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="flex flex-col gap-16 pb-20 bg-beige">
+    <>
+      <style>{scrollbarStyle}</style>
+      <div className="flex flex-col gap-16 pb-20 bg-beige">
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
@@ -324,9 +337,13 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="container mx-auto px-4 md:px-6 py-16">
-        <div className="max-w-4xl mx-auto">
+      {/* FAQ & Témoignages */}
+      <section className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-20 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           <div className="flex items-center gap-5 mb-12">
             <div className="w-14 h-14 bg-primary text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-primary/20">
               <HelpCircle size={32} />
@@ -344,75 +361,65 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               />
             ))}
           </div>
-        </div>
-      </section>
+        </motion.div>
 
-      {/* Témoignages */}
-      <section className="bg-beige py-16 overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <div className="flex items-center justify-center gap-3 sm:gap-5">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-accent text-white rounded-2xl sm:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
-                <Star size={20} className="sm:w-8 sm:h-8" />
-              </div>
-              <h2 className="text-2xl sm:text-4xl font-black tracking-tighter text-dark text-center">Avis de nos chefs</h2>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-center gap-5 mb-12">
+            <div className="w-14 h-14 bg-accent text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
+              <Star size={32} />
             </div>
-          </motion.div>
-
+            <h2 className="text-4xl font-black tracking-tighter text-dark">Avis de nos chefs</h2>
+          </div>
           <div className="relative">
-            <div className="overflow-x-auto pb-8 -mx-4 px-4">
-              <div className="flex gap-6 w-max mx-auto">
-                {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-                  <motion.div 
-                    key={`${i}-${t.name}`}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: "-20% 0px -20% 0px" }}
-                    transition={{ duration: 0.5 }}
-                    className="w-[320px] sm:w-[380px] flex-shrink-0 bg-white p-8 rounded-[2.5rem] border border-beige shadow-sm hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-3 sm:gap-6">
-                      <img 
-                        src={t.avatar} 
-                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl border-2 sm:border-4 border-beige shrink-0 object-cover shadow-lg" 
-                        alt={t.name} 
-                      />
-                      <div>
-                        <p className="text-sm sm:text-base font-black text-dark">{t.name}</p>
-                        <p className="text-[10px] sm:text-xs font-bold text-primary uppercase mt-0.5">{t.role}</p>
-                        <div className="flex gap-1 mt-2">
-                          {[...Array(5)].map((_, s) => (
-                            <Star 
-                              key={s} 
-                              size={14} 
-                              className={s < t.stars ? 'fill-accent text-accent' : 'text-beige'} 
-                            />
-                          ))}
-                        </div>
-                      </div>
+            <div className="flex gap-6 pb-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+              {TESTIMONIALS.map((t, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-20% 0px -20% 0px" }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ 
+                    x: 10, 
+                    backgroundColor: "rgba(255,255,255,0.8)",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                  }}
+                  className="bg-white p-6 sm:p-8 md:p-10 rounded-3xl md:rounded-[3rem] border border-beige flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 items-start shadow-sm transition-all cursor-default snap-center flex-shrink-0 w-[85%] sm:w-full max-w-none sm:max-w-full"
+                >
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={t.avatar} 
+                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-[1.5rem] border-2 sm:border-4 border-beige object-cover shadow-lg" 
+                      alt={t.name} 
+                    />
+                  </div>
+                  <div className="space-y-3 sm:space-y-4 min-w-0">
+                    <div className="flex gap-1.5">
+                      {[...Array(5)].map((_, s) => (
+                        <Star 
+                          key={s} 
+                          size={12} 
+                          className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3 sm:w-3.5 sm:h-3.5`} 
+                        />
+                      ))}
                     </div>
-                    <p className="mt-4 sm:mt-6 text-sm sm:text-base text-dark/80 italic leading-relaxed">"{t.content}"</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Indicateurs de défilement */}
-            <div className="flex justify-center gap-2 mt-8">
-              {TESTIMONIALS.map((_, index) => (
-                <div 
-                  key={index}
-                  className="w-2.5 h-2.5 rounded-full bg-beige-darker/30"
-                />
+                    <p className="text-sm sm:text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                    <div className="pt-2">
+                      <p className="text-xs sm:text-sm font-black uppercase text-dark tracking-[0.15em] sm:tracking-[0.2em]">{t.name}</p>
+                      <p className="text-[10px] sm:text-[11px] font-bold text-primary uppercase mt-0.5 sm:mt-1 tracking-tight">{t.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none hidden sm:block" />
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* CTA Final */}
@@ -439,6 +446,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </motion.div>
       </section>
     </div>
+    </>
   );
 };
 
