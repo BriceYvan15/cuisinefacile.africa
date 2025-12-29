@@ -37,15 +37,18 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
     }
   };
 
+  // Détermine si nous sommes sur la page d'accueil
+  const isHomePage = currentPage === 'home';
+
   return (
     <motion.header 
       variants={headerVariants}
       initial="initial"
       animate="animate"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] py-3' 
-          : 'bg-transparent py-8'
+        isHomePage && !isScrolled 
+          ? 'bg-transparent py-8' 
+          : 'bg-white/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] py-3'
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -184,6 +187,17 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
                 }}
                 className="bg-accent text-white p-6 rounded-[2rem] text-center font-black text-xs uppercase tracking-widest shadow-2xl shadow-accent/20"
               >
+                <div className={`ml-4 hidden xl:block transition-all duration-500 ${isScrolled ? 'opacity-0 -translate-x-4 pointer-events-none' : 'opacity-100'}`}>
+                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] leading-none ${isHomePage && !isScrolled ? 'text-white' : 'text-dark'}`}>
+                    Cuisine
+                  </span>
+                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${isHomePage && !isScrolled ? 'text-accent' : 'text-primary'}`}>
+                    Facile
+                  </span>
+                </div>
+                <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${isHomePage && !isScrolled ? 'text-accent' : 'text-primary'}`}>
+                  Facile
+                </span>
                 Commander ma box
               </button>
             </div>
