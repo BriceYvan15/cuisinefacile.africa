@@ -292,20 +292,25 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               <motion.div 
                 key={`${recipe.id}-${index}`} 
                 whileHover={{ scale: 1.02 }}
-                className="flex-shrink-0 w-[260px] md:w-[320px]"
+                className="flex-shrink-0 w-[200px] sm:w-[240px] md:w-[280px] lg:w-[320px]"
               >
-                <div onClick={() => onNavigate('recipe-detail', { recipe })} className="relative h-[420px] rounded-[3rem] overflow-hidden shadow-2xl border-[10px] border-white group cursor-pointer">
-                  <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]" />
+                <div onClick={() => onNavigate('recipe-detail', { recipe })} className="relative h-[320px] sm:h-[380px] md:h-[400px] rounded-2xl sm:rounded-[2rem] overflow-hidden shadow-2xl border-[6px] sm:border-[8px] md:border-[10px] border-white group cursor-pointer">
+                  <img 
+                    src={recipe.image} 
+                    alt={recipe.title} 
+                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1.5s]" 
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8">
                     <motion.span 
                       whileHover={{ scale: 1.1 }}
-                      className="bg-accent text-white px-3.5 py-1 rounded-full text-[9px] font-black uppercase mb-3 inline-block shadow-xl shadow-accent/20"
+                      className="bg-accent text-white px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full text-[8px] sm:text-[9px] font-black uppercase mb-2 sm:mb-3 inline-block shadow-xl shadow-accent/20"
                     >
                       Nouveauté
                     </motion.span>
-                    <h3 className="text-xl font-black text-white leading-tight mb-3 group-hover:text-accent transition-colors duration-300">{recipe.title}</h3>
-                    <div className="flex items-center gap-3 text-white/70 text-xs font-bold">
+                    <h3 className="text-base sm:text-lg md:text-xl font-black text-white leading-tight mb-2 sm:mb-3 group-hover:text-accent transition-colors duration-300">{recipe.title}</h3>
+                    <div className="flex items-center gap-2 sm:gap-3 text-white/70 text-[10px] sm:text-xs font-bold">
                        <div className="flex items-center gap-2">
                          <Clock size={14} className="text-primary" />
                          <span>{recipe.time}</span>
