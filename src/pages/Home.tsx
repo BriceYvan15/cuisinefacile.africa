@@ -68,16 +68,16 @@ interface FAQItemProps {
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) => (
-  <div className={`border-b border-beige/50 transition-all ${isOpen ? 'bg-white' : ''}`}>
+  <div className={`border-b border-beige transition-all ${isOpen ? 'bg-white' : ''}`}>
     <button 
       onClick={onClick}
-      className="w-full py-3 sm:py-4 px-3 sm:px-4 flex items-center justify-between text-left group"
+      className="w-full py-4 sm:py-5 px-3 sm:px-4 flex items-center justify-between text-left group"
     >
-      <span className={`text-xs sm:text-sm font-bold tracking-tight transition-colors leading-tight ${isOpen ? 'text-primary' : 'text-dark/80 group-hover:text-primary'}`}>
+      <span className={`text-xs sm:text-sm font-bold tracking-tight transition-colors ${isOpen ? 'text-primary' : 'text-dark/80 group-hover:text-primary'}`}>
         {question}
       </span>
       <div className={`shrink-0 ml-3 sm:ml-4 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : 'text-dark/20'}`}>
-        {isOpen ? <Minus size={14} className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Plus size={14} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+        {isOpen ? <Minus size={16} /> : <Plus size={16} />}
       </div>
     </button>
     <AnimatePresence>
@@ -86,10 +86,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) 
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
           className="overflow-hidden"
         >
-          <div className="px-3 sm:px-4 pb-4 sm:pb-6 text-xs leading-relaxed text-dark/60 font-medium">
+          <div className="px-3 sm:px-4 pb-4 sm:pb-6 text-xs leading-relaxed text-dark/50 font-medium">
             {answer}
           </div>
         </motion.div>
@@ -328,126 +327,130 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* FAQ & Témoignages */}
-      <section className="container mx-auto px-3 sm:px-4 md:px-6 grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-20 py-10 sm:py-12 md:py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          className="w-full max-w-md mx-auto lg:max-w-none"
-        >
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 md:mb-12 px-2 sm:px-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-primary text-white rounded-2xl sm:rounded-3xl md:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-primary/20 flex-shrink-0">
-              <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
+      <section className="w-full px-2 sm:px-4 md:px-6 py-10 sm:py-12 md:py-16">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20">
+          {/* Section FAQ */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="w-full mx-auto px-1 sm:px-2"
+          >
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-primary text-white rounded-2xl sm:rounded-3xl md:rounded-[1.5rem] flex-shrink-0 flex items-center justify-center shadow-xl shadow-primary/20">
+                <HelpCircle className="w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-black tracking-tight text-dark">Questions fréquentes</h2>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-dark">Questions fréquentes</h2>
-          </div>
-          <div className="bg-white rounded-2xl sm:rounded-3xl md:rounded-[3.5rem] shadow-lg md:shadow-xl shadow-black/5 border border-beige overflow-hidden">
-            {FAQ_DATA.map((item, index) => (
-              <FAQItem
-                key={index}
-                question={item.question}
-                answer={item.answer}
-                isOpen={openFAQIndex === index}
-                onClick={() => setOpenFAQIndex(openFAQIndex === index ? null : index)}
-              />
-            ))}
-          </div>
-        </motion.div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl md:rounded-[3.5rem] shadow-lg border border-beige overflow-hidden w-full max-w-full">
+              {FAQ_DATA.map((item, index) => (
+                <FAQItem
+                  key={index}
+                  question={item.question}
+                  answer={item.answer}
+                  isOpen={openFAQIndex === index}
+                  onClick={() => setOpenFAQIndex(openFAQIndex === index ? null : index)}
+                />
+              ))}
+            </div>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="w-full max-w-2xl mx-auto lg:max-w-none"
-        >
-          <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-accent text-white rounded-3xl md:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
-              <Star className="w-6 h-6 md:w-8 md:h-8" />
+          {/* Section Témoignages */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="w-full max-w-2xl mx-auto lg:max-w-none"
+          >
+            <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-accent text-white rounded-3xl md:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
+                <Star className="w-6 h-6 md:w-8 md:h-8" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark">Avis de nos chefs</h2>
             </div>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark">Avis de nos chefs</h2>
-          </div>
           
-          {/* Carrousel pour mobile */}
-          <div className="md:hidden">
-            <Slider 
-              dots={true}
-              infinite={true}
-              speed={500}
-              slidesToShow={1}
-              slidesToScroll={1}
-              arrows={false}
-              autoplay={true}
-              autoplaySpeed={5000}
-              className="pb-10"
-              dotsClass="slick-dots !bottom-0"
-            >
-              {TESTIMONIALS.map((t, i) => (
-                <div key={i} className="px-2">
-                  <div className="bg-white p-6 rounded-3xl border border-beige flex gap-4 items-start shadow-sm">
-                    <img 
-                      src={t.avatar} 
-                      className="w-12 h-12 rounded-2xl border-2 border-beige object-cover shadow-lg" 
-                      alt={t.name} 
-                    />
-                    <div className="space-y-2">
-                      <div className="flex gap-1">
-                        {[...Array(5)].map((_, s) => (
-                          <Star 
-                            key={s} 
-                            size={12} 
-                            className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3`} 
-                          />
-                        ))}
-                      </div>
-                      <p className="text-sm font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
-                      <div>
-                        <p className="text-xs font-black uppercase text-dark tracking-wider">{t.name}</p>
-                        <p className="text-[10px] font-bold text-primary uppercase mt-0.5 tracking-tight">{t.role}</p>
+            {/* Carrousel pour mobile */}
+            <div className="md:hidden">
+              <Slider 
+                dots={true}
+                infinite={true}
+                speed={500}
+                slidesToShow={1}
+                slidesToScroll={1}
+                arrows={false}
+                autoplay={true}
+                autoplaySpeed={5000}
+                className="pb-10"
+                dotsClass="slick-dots !bottom-0"
+              >
+                {TESTIMONIALS.map((t, i) => (
+                  <div key={i} className="px-2">
+                    <div className="bg-white p-6 rounded-3xl border border-beige flex gap-4 items-start shadow-sm">
+                      <img 
+                        src={t.avatar} 
+                        className="w-12 h-12 rounded-2xl border-2 border-beige object-cover shadow-lg" 
+                        alt={t.name} 
+                      />
+                      <div className="space-y-2">
+                        <div className="flex gap-1">
+                          {[...Array(5)].map((_, s) => (
+                            <Star 
+                              key={s} 
+                              size={12} 
+                              className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3`} 
+                            />
+                          ))}
+                        </div>
+                        <p className="text-sm font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                        <div>
+                          <p className="text-xs font-black uppercase text-dark tracking-wider">{t.name}</p>
+                          <p className="text-[10px] font-bold text-primary uppercase mt-0.5 tracking-tight">{t.role}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </Slider>
-          </div>
+                ))}
+              </Slider>
+            </div>
 
-          {/* Liste pour desktop */}
-          <div className="hidden md:block space-y-6">
-            {TESTIMONIALS.map((t, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-20% 0px" }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.8)" }}
-                className="bg-white p-8 rounded-[2rem] border border-beige flex gap-6 items-start shadow-sm transition-all cursor-default"
-              >
-                <img 
-                  src={t.avatar} 
-                  className="w-16 h-16 rounded-[1.5rem] border-4 border-beige object-cover shadow-lg" 
-                  alt={t.name} 
-                />
-                <div className="space-y-3">
-                  <div className="flex gap-1">
-                    {[...Array(5)].map((_, s) => (
-                      <Star 
-                        key={s} 
-                        size={14} 
-                        className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3.5 h-3.5`} 
-                      />
-                    ))}
+            {/* Liste pour desktop */}
+            <div className="hidden md:block space-y-6">
+              {TESTIMONIALS.map((t, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-20% 0px" }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.8)" }}
+                  className="bg-white p-8 rounded-[2rem] border border-beige flex gap-6 items-start shadow-sm transition-all cursor-default"
+                >
+                  <img 
+                    src={t.avatar} 
+                    className="w-16 h-16 rounded-[1.5rem] border-4 border-beige object-cover shadow-lg" 
+                    alt={t.name} 
+                  />
+                  <div className="space-y-3">
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, s) => (
+                        <Star 
+                          key={s} 
+                          size={14} 
+                          className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3.5 h-3.5`} 
+                        />
+                      ))}
+                    </div>
+                    <p className="text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                    <div>
+                      <p className="text-sm font-black uppercase text-dark tracking-wider">{t.name}</p>
+                      <p className="text-[11px] font-bold text-primary uppercase mt-1 tracking-tight">{t.role}</p>
+                    </div>
                   </div>
-                  <p className="text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
-                  <div>
-                    <p className="text-sm font-black uppercase text-dark tracking-wider">{t.name}</p>
-                    <p className="text-[11px] font-bold text-primary uppercase mt-1 tracking-tight">{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </section>
 
       {/* CTA Section */}
