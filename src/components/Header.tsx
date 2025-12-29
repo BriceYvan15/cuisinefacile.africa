@@ -40,15 +40,18 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
   // Détermine si nous sommes sur la page d'accueil
   const isHomePage = currentPage === 'home';
 
+  // Afficher l'effet de verre sur toutes les pages sauf sur l'accueil (où on l'affiche uniquement au scroll)
+  const shouldShowGlassEffect = !isHomePage || isScrolled;
+
   return (
     <motion.header 
       variants={headerVariants}
       initial="initial"
       animate="animate"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-        isHomePage && !isScrolled 
-          ? 'bg-transparent py-8' 
-          : 'bg-white/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] py-3'
+        shouldShowGlassEffect 
+          ? 'bg-white/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] py-3' 
+          : 'bg-transparent py-8'
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -81,16 +84,20 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
 
         {/* Desktop Nav */}
         <nav className={`hidden md:flex items-center gap-10 px-10 py-3.5 rounded-2xl transition-all duration-700 ${
-          isScrolled ? 'bg-dark/5' : 'bg-white/10 backdrop-blur-md'
+          shouldShowGlassEffect 
+            ? 'bg-white/10 backdrop-blur-md shadow-lg'
+            : 'bg-white/10 backdrop-blur-md'
         }`}>
           {navLinks.map((link) => (
             <button
               key={link.id}
               onClick={() => onNavigate(link.id)}
-              className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all hover:text-primary relative group ${
+              className={`relative font-medium text-sm uppercase tracking-wider transition-colors ${
                 currentPage === link.id 
-                  ? 'text-primary' 
-                  : (isScrolled ? 'text-dark/80' : 'text-white/90')
+                  ? 'text-accent font-bold' 
+                  : shouldShowGlassEffect 
+                    ? 'text-dark hover:text-accent/90' 
+                    : 'text-white hover:text-accent/80'
               }`}
             >
               {link.name}
@@ -188,14 +195,14 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
                 className="bg-accent text-white p-6 rounded-[2rem] text-center font-black text-xs uppercase tracking-widest shadow-2xl shadow-accent/20"
               >
                 <div className={`ml-4 hidden xl:block transition-all duration-500 ${isScrolled ? 'opacity-0 -translate-x-4 pointer-events-none' : 'opacity-100'}`}>
-                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] leading-none ${isHomePage && !isScrolled ? 'text-white' : 'text-dark'}`}>
+                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] leading-none ${shouldShowGlassEffect ? 'text-dark' : 'text-white'}`}>
                     Cuisine
                   </span>
-                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${isHomePage && !isScrolled ? 'text-accent' : 'text-primary'}`}>
+                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${shouldShowGlassEffect ? 'text-primary' : 'text-accent'}`}>
                     Facile
                   </span>
                 </div>
-                <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${isHomePage && !isScrolled ? 'text-accent' : 'text-primary'}`}>
+                <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${shouldShowGlassEffect ? 'text-primary' : 'text-accent'}`}>
                   Facile
                 </span>
                 Commander ma box
