@@ -68,16 +68,16 @@ interface FAQItemProps {
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) => (
-  <div className={`border-b border-beige transition-all ${isOpen ? 'bg-white' : ''}`}>
+  <div className={`border-b border-beige/50 transition-all ${isOpen ? 'bg-white' : ''}`}>
     <button 
       onClick={onClick}
-      className="w-full py-5 px-4 flex items-center justify-between text-left group"
+      className="w-full py-3 sm:py-4 px-3 sm:px-4 flex items-center justify-between text-left group"
     >
-      <span className={`text-sm font-bold tracking-tight transition-colors ${isOpen ? 'text-primary' : 'text-dark/80 group-hover:text-primary'}`}>
+      <span className={`text-xs sm:text-sm font-bold tracking-tight transition-colors leading-tight ${isOpen ? 'text-primary' : 'text-dark/80 group-hover:text-primary'}`}>
         {question}
       </span>
-      <div className={`shrink-0 ml-4 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : 'text-dark/20'}`}>
-        {isOpen ? <Minus size={16} /> : <Plus size={16} />}
+      <div className={`shrink-0 ml-3 sm:ml-4 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : 'text-dark/20'}`}>
+        {isOpen ? <Minus size={14} className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Plus size={14} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
       </div>
     </button>
     <AnimatePresence>
@@ -86,9 +86,10 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) 
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
           className="overflow-hidden"
         >
-          <div className="px-4 pb-6 text-xs leading-relaxed text-dark/50 font-medium">
+          <div className="px-3 sm:px-4 pb-4 sm:pb-6 text-xs leading-relaxed text-dark/60 font-medium">
             {answer}
           </div>
         </motion.div>
@@ -327,20 +328,20 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* FAQ & Témoignages */}
-      <section className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-12 md:gap-20 py-12 md:py-16">
+      <section className="container mx-auto px-3 sm:px-4 md:px-6 grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-20 py-10 sm:py-12 md:py-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="w-full max-w-2xl mx-auto lg:max-w-none"
+          viewport={{ once: true, margin: "-10% 0px" }}
+          className="w-full max-w-md mx-auto lg:max-w-none"
         >
-          <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-primary text-white rounded-3xl md:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-primary/20">
-              <HelpCircle className="w-6 h-6 md:w-8 md:h-8" />
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 md:mb-12 px-2 sm:px-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-primary text-white rounded-2xl sm:rounded-3xl md:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-primary/20 flex-shrink-0">
+              <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark">Questions fréquentes</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-dark">Questions fréquentes</h2>
           </div>
-          <div className="bg-white rounded-3xl md:rounded-[3.5rem] shadow-lg md:shadow-xl shadow-black/5 border border-beige overflow-hidden">
+          <div className="bg-white rounded-2xl sm:rounded-3xl md:rounded-[3.5rem] shadow-lg md:shadow-xl shadow-black/5 border border-beige overflow-hidden">
             {FAQ_DATA.map((item, index) => (
               <FAQItem
                 key={index}
