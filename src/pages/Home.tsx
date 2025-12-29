@@ -159,7 +159,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   return (
     <div className="flex flex-col gap-16 pb-20 bg-beige">
       {/* Hero Section */}
-      <section ref={heroRef} className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
           <motion.img 
             initial={{ scale: 1.2 }}
@@ -172,7 +172,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           <div className="absolute inset-0 bg-gradient-to-b from-dark/90 via-dark/40 to-beige" />
         </motion.div>
 
-        <div className="container relative z-10 mx-auto px-4 text-center pt-44 pb-20">
+        <div className="container relative z-10 mx-auto px-4 text-center pt-32 md:pt-44 pb-16 md:pb-20">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -190,12 +190,12 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               <span className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.4em]">Qualité Premium Africa</span>
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-3xl md:text-6xl lg:text-7xl font-black leading-[1.05] text-white mb-8 tracking-tight">
-              Faites des économies de <span className="text-accent underline decoration-accent/30 decoration-8 underline-offset-8">temps</span> <br className="hidden md:block" /> et d'argent. <br/>
+            <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-black leading-tight text-white mb-6 sm:mb-8 tracking-tight">
+              Faites des économies de <span className="text-accent underline decoration-accent/30 decoration-4 sm:decoration-6 md:decoration-8 underline-offset-4 sm:underline-offset-8">temps</span> <br className="hidden md:block" /> et d'argent. <br/>
               <span className="text-secondary italic">Manger bien et sainement.</span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-base md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+            <motion.p variants={itemVariants} className="text-sm sm:text-base md:text-xl text-white/80 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
               Des ingrédients frais et de qualité, livrés chez vous,<br className="hidden sm:block" /> pour des recettes faciles à réaliser.
             </motion.p>
 
