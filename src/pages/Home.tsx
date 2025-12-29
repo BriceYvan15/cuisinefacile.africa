@@ -244,7 +244,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           <div className="h-2 w-20 bg-primary mx-auto rounded-full" />
         </motion.div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {HOW_IT_WORKS.map((step, index) => (
             <motion.div 
               key={index}
@@ -253,13 +253,13 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
               whileHover={{ y: -10 }}
-              className="bg-white p-10 rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-beige/50 text-center group transition-all hover:shadow-[0_30px_60px_rgba(139,29,29,0.1)]"
+              className="bg-white p-4 sm:p-6 md:p-10 rounded-2xl sm:rounded-[2rem] md:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-beige/50 text-center group transition-all hover:shadow-[0_30px_60px_rgba(139,29,29,0.1)]"
             >
-              <div className="w-16 h-16 bg-beige text-primary text-xl font-black rounded-3xl flex items-center justify-center mb-8 mx-auto group-hover:bg-primary group-hover:text-white group-hover:rotate-6 transition-all duration-500">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-beige text-primary text-base sm:text-lg md:text-xl font-black rounded-2xl sm:rounded-3xl flex items-center justify-center mb-4 sm:mb-6 md:mb-8 mx-auto group-hover:bg-primary group-hover:text-white group-hover:rotate-6 transition-all duration-500">
                 {index + 1}
               </div>
-              <h3 className="text-lg font-black mb-4 text-dark">{step.title}</h3>
-              <p className="text-dark/40 text-sm leading-relaxed font-medium">{step.description}</p>
+              <h3 className="text-sm sm:text-base md:text-lg font-black mb-2 sm:mb-3 md:mb-4 text-dark">{step.title}</h3>
+              <p className="text-dark/40 text-xs sm:text-sm leading-relaxed font-medium">{step.description}</p>
             </motion.div>
           ))}
         </div>
