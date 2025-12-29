@@ -1,0 +1,125 @@
+
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ShoppingCart, Search, Filter, Clock, Flame, Eye } from 'lucide-react';
+import { RECIPES } from '../constants';
+import { Recipe } from '../types';
+
+interface RecipesProps {
+  onAddToCart: (recipe: Recipe) => void;
+  onNavigate: (page: string, params?: any) => void;
+}
+
+const Recipes: React.FC<RecipesProps> = ({ onAddToCart, onNavigate }) => {
+  const [filter, setFilter] = useState('All');
+  const [search, setSearch] = useState('');
+
+  const filteredRecipes = RECIPES.filter(recipe => {
+    const matchesFilter = filter === 'All' || recipe.category === filter;
+    const matchesSearch = recipe.title.toLowerCase().includes(search.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  const categories = ['All', ...Array.from(new Set(RECIPES.map(r => r.category)))];
+
+  return (
+    <div className="pt-28 pb-20 container mx-auto px-4 md:px-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight">Le Menu de la Semaine</h1>
+          <p className="text-dark/40 text-sm">Sélectionnez vos plats préférés.</p>
+        </div>
+
+        <div className="flex w-full md:w-auto gap-3">
+          <div className="relative flex-grow md:w-64">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark/30" size={18} />
+            <input 
+              type="text" 
+              placeholder="Chercher..."
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-white border border-beige focus:outline-none focus:border-primary/30 shadow-sm text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <button className="bg-white border border-beige p-3 rounded-xl text-dark/70 hover:text-primary transition-colors">
+            <Filter size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Categories */}
+      <div className="flex gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+        {categories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setFilter(cat)}
+            className={`whitespace-nowrap px-6 py-2 rounded-full text-xs font-black transition-all ${filter === cat ? 'bg-primary text-white shadow-md' : 'bg-white text-dark/50 hover:bg-beige'}`}
+          >
+            {cat.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Recipe Grid - Plus compact */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredRecipes.map((recipe, index) => (
+          <motion.div
+            key={recipe.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-beige/50"
+          >
+            <div className="relative h-48 overflow-hidden">
+              <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute top-3 left-3">
+                <span className="bg-white/95 backdrop-blur px-3 py-1 rounded-full text-[8px] font-black text-primary uppercase tracking-widest shadow-sm">
+                  {recipe.category}
+                </span>
+              </div>
+            </div>
+            <div className="p-6">
+              <h3 className="font-black text-lg mb-2 group-hover:text-primary transition-colors leading-tight">{recipe.title}</h3>
+              <p className="text-dark/40 text-xs mb-4 line-clamp-2">
+                {recipe.description}
+              </p>
+              
+              <div className="flex items-center gap-4 text-[9px] font-black text-dark/30 uppercase tracking-widest mb-6">
+                <div className="flex items-center gap-1">
+                  <Clock size={14} className="text-primary" />
+                  {recipe.time}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Flame size={14} className="text-accent" />
+                  {recipe.calories}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-4 border-t border-beige">
+                <button 
+                  onClick={() => onNavigate('recipe-detail', { recipe })}
+                  className="w-full bg-beige hover:bg-primary/5 text-primary py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                >
+                  <Eye size={16} />
+                  DÉTAILS
+                </button>
+                <button 
+                  onClick={() => onAddToCart(recipe)}
+                  className="w-full bg-primary hover:bg-red-900 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/10 transition-all flex items-center justify-center gap-2"
+                >
+                  <ShoppingCart size={16} />
+                  AJOUTER BOX
+                </button>
+              </div>
+              <div className="mt-3 text-center">
+                <p className="text-lg font-black text-dark">{recipe.price.toLocaleString()} F CFA</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Recipes;
