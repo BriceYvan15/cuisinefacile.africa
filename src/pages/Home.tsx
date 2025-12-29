@@ -356,11 +356,11 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <div className="flex items-center justify-center gap-5">
-              <div className="w-14 h-14 bg-accent text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
-                <Star size={32} />
+            <div className="flex items-center justify-center gap-3 sm:gap-5">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-accent text-white rounded-2xl sm:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
+                <Star size={20} className="sm:w-8 sm:h-8" />
               </div>
-              <h2 className="text-4xl font-black tracking-tighter text-dark text-center">Avis de nos chefs</h2>
+              <h2 className="text-2xl sm:text-4xl font-black tracking-tighter text-dark text-center">Avis de nos chefs</h2>
             </div>
           </motion.div>
 
@@ -376,15 +376,15 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
                     transition={{ duration: 0.5 }}
                     className="w-[320px] sm:w-[380px] flex-shrink-0 bg-white p-8 rounded-[2.5rem] border border-beige shadow-sm hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 sm:gap-6">
                       <img 
                         src={t.avatar} 
-                        className="w-16 h-16 rounded-2xl border-4 border-beige shrink-0 object-cover shadow-lg" 
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl border-2 sm:border-4 border-beige shrink-0 object-cover shadow-lg" 
                         alt={t.name} 
                       />
                       <div>
-                        <p className="text-base font-black text-dark">{t.name}</p>
-                        <p className="text-xs font-bold text-primary uppercase mt-1">{t.role}</p>
+                        <p className="text-sm sm:text-base font-black text-dark">{t.name}</p>
+                        <p className="text-[10px] sm:text-xs font-bold text-primary uppercase mt-0.5">{t.role}</p>
                         <div className="flex gap-1 mt-2">
                           {[...Array(5)].map((_, s) => (
                             <Star 
@@ -396,7 +396,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
                         </div>
                       </div>
                     </div>
-                    <p className="mt-6 text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                    <p className="mt-4 sm:mt-6 text-sm sm:text-base text-dark/80 italic leading-relaxed">"{t.content}"</p>
                   </motion.div>
                 ))}
               </div>
