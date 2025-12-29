@@ -189,45 +189,42 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white/98 backdrop-blur-2xl border-t border-beige overflow-hidden shadow-2xl absolute top-full left-0 right-0"
+            className="md:hidden bg-white/95 backdrop-blur-xl border-t border-white/20 overflow-hidden shadow-2xl absolute top-full left-0 right-0"
+            style={{
+              background: 'rgba(255, 255, 255, 0.98)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)'
+            }}
           >
-            <div className="container mx-auto px-6 py-10 flex flex-col gap-5">
+            <div className="container mx-auto px-6 py-8 flex flex-col gap-4">
               {navLinks.map((link) => (
                 <motion.button
                   key={link.id}
-                  whileTap={{ x: 10 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     onNavigate(link.id);
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`text-xs font-black uppercase tracking-[0.25em] text-left p-5 rounded-2xl transition-all ${
-                    currentPage === link.id ? 'bg-primary/10 text-primary' : 'text-dark/60 hover:bg-beige'
+                  className={`text-sm font-bold uppercase tracking-wider text-left p-4 rounded-xl transition-all ${
+                    currentPage === link.id 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'text-dark/80 hover:bg-gray-50'
                   }`}
                 >
                   {link.name}
                 </motion.button>
               ))}
-              <div className="h-px bg-beige/50 my-4" />
-              <button 
+              <div className="h-px bg-gray-100 my-4" />
+              <motion.button 
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   onNavigate('recipes');
                   setIsMobileMenuOpen(false);
                 }}
-                className="bg-accent text-white p-6 rounded-[2rem] text-center font-black text-xs uppercase tracking-widest shadow-2xl shadow-accent/20"
+                className="w-full bg-primary text-white p-5 rounded-2xl text-center font-black text-sm uppercase tracking-wider shadow-lg hover:bg-primary/90 transition-colors"
               >
-                <div className={`ml-4 hidden xl:block transition-all duration-500 ${isScrolled ? 'opacity-0 -translate-x-4 pointer-events-none' : 'opacity-100'}`}>
-                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] leading-none ${shouldShowGlassEffect ? 'text-dark' : 'text-white'}`}>
-                    Cuisine
-                  </span>
-                  <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${shouldShowGlassEffect ? 'text-primary' : 'text-accent'}`}>
-                    Facile
-                  </span>
-                </div>
-                <span className={`block font-black text-[10px] uppercase tracking-[0.3em] mt-1.5 leading-none ${shouldShowGlassEffect ? 'text-primary' : 'text-accent'}`}>
-                  Facile
-                </span>
                 Commander ma box
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         )}
