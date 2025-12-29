@@ -324,13 +324,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* FAQ & Témoignages */}
-      <section className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-20 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+      {/* FAQ */}
+      <section className="container mx-auto px-4 md:px-6 py-16">
+        <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-5 mb-12">
             <div className="w-14 h-14 bg-primary text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-primary/20">
               <HelpCircle size={32} />
@@ -348,45 +344,75 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               />
             ))}
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="flex items-center gap-5 mb-12">
-            <div className="w-14 h-14 bg-accent text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
-              <Star size={32} />
+      {/* Témoignages */}
+      <section className="bg-beige py-16 overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12"
+          >
+            <div className="flex items-center justify-center gap-5">
+              <div className="w-14 h-14 bg-accent text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
+                <Star size={32} />
+              </div>
+              <h2 className="text-4xl font-black tracking-tighter text-dark text-center">Avis de nos chefs</h2>
             </div>
-            <h2 className="text-4xl font-black tracking-tighter text-dark">Avis de nos chefs</h2>
+          </motion.div>
+
+          <div className="relative">
+            <div className="overflow-x-auto pb-8 -mx-4 px-4">
+              <div className="flex gap-6 w-max mx-auto">
+                {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
+                  <motion.div 
+                    key={`${i}-${t.name}`}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: "-20% 0px -20% 0px" }}
+                    transition={{ duration: 0.5 }}
+                    className="w-[320px] sm:w-[380px] flex-shrink-0 bg-white p-8 rounded-[2.5rem] border border-beige shadow-sm hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-6">
+                      <img 
+                        src={t.avatar} 
+                        className="w-16 h-16 rounded-2xl border-4 border-beige shrink-0 object-cover shadow-lg" 
+                        alt={t.name} 
+                      />
+                      <div>
+                        <p className="text-base font-black text-dark">{t.name}</p>
+                        <p className="text-xs font-bold text-primary uppercase mt-1">{t.role}</p>
+                        <div className="flex gap-1 mt-2">
+                          {[...Array(5)].map((_, s) => (
+                            <Star 
+                              key={s} 
+                              size={14} 
+                              className={s < t.stars ? 'fill-accent text-accent' : 'text-beige'} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-6 text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Indicateurs de défilement */}
+            <div className="flex justify-center gap-2 mt-8">
+              {TESTIMONIALS.map((_, index) => (
+                <div 
+                  key={index}
+                  className="w-2.5 h-2.5 rounded-full bg-beige-darker/30"
+                />
+              ))}
+            </div>
           </div>
-          <div className="space-y-8">
-            {TESTIMONIALS.map((t, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.15 }}
-                whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.8)" }}
-                className="bg-white p-10 rounded-[3rem] border border-beige flex gap-8 items-start shadow-sm transition-all cursor-default"
-              >
-                <img src={t.avatar} className="w-16 h-16 rounded-[1.5rem] border-4 border-beige shrink-0 object-cover shadow-lg" alt={t.name} />
-                <div className="space-y-4">
-                  <div className="flex gap-1.5">
-                    {[...Array(5)].map((_, s) => <Star key={s} size={14} className={s < t.stars ? 'fill-accent text-accent' : 'text-beige'} />)}
-                  </div>
-                  <p className="text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
-                  <div>
-                    <p className="text-sm font-black uppercase text-dark tracking-[0.2em]">{t.name}</p>
-                    <p className="text-[11px] font-bold text-primary uppercase mt-1 tracking-tight">{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* CTA Final */}
