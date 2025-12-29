@@ -9,6 +9,12 @@ export default defineConfig(({ mode }) => {
         port: 3000,
         host: '0.0.0.0',
       },
+      preview: {
+        host: true,
+        port: 3000,
+        strictPort: true,
+        allowedHosts: ['cuisinefacile-africa.onrender.com', 'localhost']
+      },
       publicDir: 'src/public',
       plugins: [react()],
       define: {
