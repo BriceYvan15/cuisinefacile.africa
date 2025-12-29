@@ -112,12 +112,16 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
         {/* Actions */}
         <div className="flex items-center gap-3 md:gap-5">
           <div className={`flex items-center gap-1.5 p-1.5 rounded-2xl transition-all duration-700 ${
-            isScrolled ? 'bg-dark/5' : 'bg-white/10 backdrop-blur-md'
+            shouldShowGlassEffect 
+              ? 'bg-white/10 backdrop-blur-md shadow-lg' 
+              : 'bg-white/10 backdrop-blur-md'
           }`}>
             <button 
               onClick={() => onNavigate('dashboard')}
               className={`p-3 rounded-xl transition-all ${
-                isScrolled ? 'text-dark/70 hover:bg-white hover:text-primary shadow-sm' : 'text-white hover:bg-white/20'
+                shouldShowGlassEffect 
+                  ? 'text-dark hover:bg-white/20 hover:text-primary' 
+                  : 'text-white hover:bg-white/20'
               }`}
             >
               <UserIcon size={20} />
@@ -125,7 +129,9 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
             <button 
               onClick={() => onNavigate('checkout')}
               className={`p-3 rounded-xl transition-all relative ${
-                isScrolled ? 'text-dark/70 hover:bg-white hover:text-primary shadow-sm' : 'text-white hover:bg-white/20'
+                shouldShowGlassEffect 
+                  ? 'text-dark hover:bg-white/20 hover:text-primary' 
+                  : 'text-white hover:bg-white/20'
               }`}
             >
               <ShoppingBag size={20} />
@@ -133,7 +139,11 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
                 <motion.span 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute top-2 right-2 bg-primary text-white text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border-2 border-white"
+                  className={`absolute top-2 right-2 text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border-2 ${
+                    shouldShowGlassEffect 
+                      ? 'bg-primary text-white border-white' 
+                      : 'bg-accent text-white border-white'
+                  }`}
                 >
                   {cartCount}
                 </motion.span>
@@ -142,21 +152,32 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
           </div>
           
           <motion.button 
-            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -10px rgba(242,153,74,0.3)" }}
+            whileHover={{ 
+              scale: 1.05, 
+              boxShadow: shouldShowGlassEffect 
+                ? "0 20px 40px -10px rgba(0,0,0,0.15)" 
+                : "0 20px 40px -10px rgba(242,153,74,0.3)"
+            }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate('recipes')}
-            className="hidden sm:block bg-accent text-white px-8 py-4 rounded-2xl text-[10px] font-black tracking-widest shadow-xl shadow-accent/20 transition-all uppercase"
+            className={`hidden sm:block px-8 py-4 rounded-2xl text-[10px] font-black tracking-widest transition-all uppercase ${
+              shouldShowGlassEffect
+                ? 'bg-primary text-white shadow-lg hover:bg-primary/90'
+                : 'bg-accent text-white shadow-xl shadow-accent/20 hover:bg-accent/90'
+            }`}
           >
             Commander
           </motion.button>
           
           <button 
             className={`md:hidden p-3 rounded-2xl transition-all ${
-              isScrolled ? 'text-dark hover:bg-dark/5' : 'text-white hover:bg-white/10'
+              shouldShowGlassEffect 
+                ? 'text-dark hover:bg-white/20' 
+                : 'text-white hover:bg-white/10'
             }`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
