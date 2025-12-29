@@ -11,17 +11,6 @@ import {
 } from 'lucide-react';
 import { HOW_IT_WORKS, RECIPES } from '../constants';
 
-// Style personnalisé pour masquer la barre de défilement
-const scrollbarStyle = `
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-`;
-
 interface HomeProps {
   onNavigate: (page: string, params?: any) => void;
 }
@@ -168,9 +157,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   };
 
   return (
-    <>
-      <style>{scrollbarStyle}</style>
-      <div className="flex flex-col gap-16 pb-20 bg-beige">
+    <div className="flex flex-col gap-16 pb-20 bg-beige">
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
@@ -376,48 +363,42 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             <h2 className="text-4xl font-black tracking-tighter text-dark">Avis de nos chefs</h2>
           </div>
           <div className="relative">
-            <div className="flex gap-6 pb-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+            <div className="flex gap-6 overflow-x-auto pb-6 -mx-4 px-4 md:block md:space-y-8 md:overflow-visible md:p-0">
               {TESTIMONIALS.map((t, i) => (
                 <motion.div 
                   key={i} 
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-20% 0px -20% 0px" }}
+                  viewport={{ once: true, margin: "-20% 0px" }}
                   transition={{ delay: i * 0.1 }}
-                  whileHover={{ 
-                    x: 10, 
-                    backgroundColor: "rgba(255,255,255,0.8)",
-                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                  }}
-                  className="bg-white p-6 sm:p-8 md:p-10 rounded-3xl md:rounded-[3rem] border border-beige flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 items-start shadow-sm transition-all cursor-default snap-center flex-shrink-0 w-[85%] sm:w-full max-w-none sm:max-w-full"
+                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.8)" }}
+                  className="min-w-[300px] md:min-w-0 md:w-full bg-white p-6 md:p-10 rounded-3xl md:rounded-[3rem] border border-beige flex gap-4 md:gap-8 items-start shadow-sm transition-all cursor-default"
                 >
-                  <div className="flex-shrink-0">
-                    <img 
-                      src={t.avatar} 
-                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-[1.5rem] border-2 sm:border-4 border-beige object-cover shadow-lg" 
-                      alt={t.name} 
-                    />
-                  </div>
-                  <div className="space-y-3 sm:space-y-4 min-w-0">
-                    <div className="flex gap-1.5">
+                  <img 
+                    src={t.avatar} 
+                    className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-[1.5rem] border-2 md:border-4 border-beige shrink-0 object-cover shadow-lg" 
+                    alt={t.name} 
+                  />
+                  <div className="space-y-2 md:space-y-4">
+                    <div className="flex gap-1">
                       {[...Array(5)].map((_, s) => (
                         <Star 
                           key={s} 
                           size={12} 
-                          className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3 sm:w-3.5 sm:h-3.5`} 
+                          className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3 md:w-3.5 md:h-3.5`} 
                         />
                       ))}
                     </div>
-                    <p className="text-sm sm:text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
-                    <div className="pt-2">
-                      <p className="text-xs sm:text-sm font-black uppercase text-dark tracking-[0.15em] sm:tracking-[0.2em]">{t.name}</p>
-                      <p className="text-[10px] sm:text-[11px] font-bold text-primary uppercase mt-0.5 sm:mt-1 tracking-tight">{t.role}</p>
+                    <p className="text-sm md:text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                    <div>
+                      <p className="text-xs md:text-sm font-black uppercase text-dark tracking-wider md:tracking-[0.2em]">{t.name}</p>
+                      <p className="text-[10px] md:text-[11px] font-bold text-primary uppercase mt-0.5 md:mt-1 tracking-tight">{t.role}</p>
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-16 h-full bg-gradient-to-l from-white to-transparent pointer-events-none hidden sm:block" />
+            <div className="md:hidden text-center mt-4 text-xs text-dark/40">Faites défiler pour voir plus →</div>
           </div>
         </motion.div>
       </section>
@@ -446,7 +427,6 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </motion.div>
       </section>
     </div>
-    </>
   );
 };
 
