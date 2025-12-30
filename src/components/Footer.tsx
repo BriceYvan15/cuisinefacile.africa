@@ -12,9 +12,9 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <img 
-                src="/cuisine_facile.africa.jpg" 
+                src="/CUISINE.png" 
                 alt="Logo CuisineFacile" 
-                className="h-12 w-auto object-contain" 
+                className="h-16 w-auto object-contain" 
               />
             </div>
             <p className="text-white/60 text-sm leading-relaxed">
