@@ -1,21 +1,48 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Flame, ChevronLeft, Check, Minus, Plus, ShoppingBag, Utensils, Info } from 'lucide-react';
+import { Clock, Flame, ChevronLeft, Check, Minus, Plus, ShoppingBag, Utensils, Info, RefreshCw } from 'lucide-react';
 import { Recipe, SelectedIngredient, CartItem } from '../types';
+import { getRecipeById } from '../lib/supabase';
 
 interface RecipeDetailProps {
   recipe: Recipe;
+  recipes?: Recipe[];
+  onRefreshRecipes?: () => void;
   onAddToCart: (item: CartItem) => void;
   onBack: () => void;
 }
 
-const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onAddToCart, onBack }) => {
+const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe: initialRecipe, recipes, onRefreshRecipes, onAddToCart, onBack }) => {
+  const [recipe, setRecipe] = useState<Recipe>(initialRecipe);
   const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>([]);
   const [activeTab, setActiveTab] = useState<'ingredients' | 'steps'>('ingredients');
+  const [refreshing, setRefreshing] = useState(false);
 
+  // Mettre à jour la recette si elle change depuis l'extérieur
   useEffect(() => {
-    // Initialisation des ingrédients avec les valeurs par défaut de la recette
+    setRecipe(initialRecipe);
+  }, [initialRecipe]);
+
+  // Vérifier si une version plus récente de la recette existe dans la liste
+  useEffect(() => {
+    if (recipes && recipes.length > 0) {
+      const updatedRecipe = recipes.find(r => r.id === recipe.id);
+      if (updatedRecipe) {
+        // Comparer les timestamps ou simplement mettre à jour si différent
+        // Pour simplifier, on met à jour si les ingrédients ont changé
+        const ingredientsChanged = JSON.stringify(updatedRecipe.ingredients) !== JSON.stringify(recipe.ingredients);
+        const priceChanged = updatedRecipe.price !== recipe.price;
+        
+        if (ingredientsChanged || priceChanged) {
+          setRecipe(updatedRecipe);
+        }
+      }
+    }
+  }, [recipes, recipe.id]);
+
+  // Initialisation des ingrédients avec les valeurs par défaut de la recette
+  useEffect(() => {
     setSelectedIngredients(
       recipe.ingredients.map(ing => ({
         ...ing,
@@ -24,6 +51,25 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onAddToCart, onBack
       }))
     );
   }, [recipe]);
+
+  // Fonction pour recharger la recette depuis Supabase
+  const refreshRecipe = async () => {
+    try {
+      setRefreshing(true);
+      const freshRecipe = await getRecipeById(recipe.id);
+      if (freshRecipe) {
+        setRecipe(freshRecipe);
+        // Si on a une fonction de rafraîchissement globale, l'appeler aussi
+        if (onRefreshRecipes) {
+          onRefreshRecipes();
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing recipe:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const toggleIngredient = (id: string) => {
     setSelectedIngredients(prev => prev.map(ing => 
@@ -41,15 +87,45 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onAddToCart, onBack
     }));
   };
 
-  const totalPrice = selectedIngredients.reduce((acc, ing) => 
-    ing.selected ? acc + (ing.selectedQuantity * ing.pricePerUnit) : acc, 0
-  );
+  // Calculer le prix total basé sur les ingrédients sélectionnés
+  const totalPrice = selectedIngredients.reduce((acc, ing) => {
+    if (!ing.selected) return acc;
+    
+    // PRIORITÉ 1: Si l'ingrédient a un prix par unité défini dans Supabase, l'utiliser directement
+    if (ing.pricePerUnit !== undefined && ing.pricePerUnit !== null) {
+      const ingredientTotal = ing.selectedQuantity * ing.pricePerUnit;
+      return acc + ingredientTotal;
+    }
+    
+    // PRIORITÉ 2: Si pas de prix par unité, calculer proportionnellement au prix de base
+    // On utilise la quantité par défaut de la recette comme référence
+    const defaultIngredient = recipe.ingredients.find(rIng => rIng.id === ing.id);
+    if (defaultIngredient && defaultIngredient.quantity > 0) {
+      // Calculer le ratio de la quantité sélectionnée vs quantité par défaut
+      const quantityRatio = ing.selectedQuantity / defaultIngredient.quantity;
+      
+      // Calculer la part de prix de cet ingrédient dans le prix total de base
+      // On répartit le prix de base proportionnellement aux quantités par défaut
+      const totalDefaultQuantity = recipe.ingredients.reduce((sum, rIng) => sum + rIng.quantity, 0);
+      if (totalDefaultQuantity > 0) {
+        const ingredientWeight = defaultIngredient.quantity / totalDefaultQuantity;
+        const ingredientBasePrice = recipe.price * ingredientWeight;
+        const ingredientPrice = ingredientBasePrice * quantityRatio;
+        return acc + ingredientPrice;
+      }
+    }
+    
+    return acc;
+  }, 0);
+  
+  // Arrondir pour éviter les problèmes de précision
+  const roundedTotalPrice = Math.round(totalPrice);
 
   const handleAddToCart = () => {
     const cartItem: CartItem = {
       recipe,
       selectedIngredients: selectedIngredients.filter(ing => ing.selected),
-      totalPrice,
+      totalPrice: roundedTotalPrice,
       quantity: 1
     };
     onAddToCart(cartItem);
@@ -58,14 +134,26 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onAddToCart, onBack
   return (
     <div className="pt-24 pb-24 bg-beige min-h-screen">
       <div className="container mx-auto px-4 md:px-6">
-        {/* Back Button */}
-        <button 
-          onClick={onBack}
-          className="flex items-center gap-2 text-dark/60 hover:text-primary transition-colors mb-8 font-bold group"
-        >
-          <ChevronLeft className="group-hover:-translate-x-1 transition-transform" />
-          Retour au menu
-        </button>
+        {/* Back Button & Refresh */}
+        <div className="flex items-center justify-between mb-8">
+          <button 
+            onClick={onBack}
+            className="flex items-center gap-2 text-dark/60 hover:text-primary transition-colors font-bold group"
+          >
+            <ChevronLeft className="group-hover:-translate-x-1 transition-transform" />
+            Retour au menu
+          </button>
+          
+          <button
+            onClick={refreshRecipe}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-dark/60 hover:text-primary transition-colors bg-white rounded-xl border border-beige hover:border-primary/20 disabled:opacity-50"
+            title="Actualiser les données depuis Supabase"
+          >
+            <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+            {refreshing ? 'Actualisation...' : 'Actualiser'}
+          </button>
+        </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Section Image & Meta */}
@@ -151,38 +239,82 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, onAddToCart, onBack
                           >
                             {ing.selected && <Check size={14} strokeWidth={4} />}
                           </button>
-                          <div>
+                          <div className="flex-1">
                             <p className="font-bold text-dark leading-tight">{ing.name}</p>
-                            <p className="text-xs text-dark/40 uppercase font-black tracking-tighter">
-                              {ing.selectedQuantity} {ing.unit}
-                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-xs text-dark/40 uppercase font-black tracking-tighter">
+                                {ing.selectedQuantity} {ing.unit}
+                              </p>
+                              {ing.pricePerUnit !== undefined && ing.pricePerUnit !== null && (
+                                <span className="text-xs text-primary font-bold">
+                                  ({ing.pricePerUnit.toLocaleString()} F/{ing.unit})
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3 bg-white px-3 py-2 rounded-xl border border-beige shadow-sm">
-                          <button 
-                            onClick={() => updateQuantity(ing.id, -1)}
-                            className="text-primary hover:bg-primary/10 p-1 rounded-md transition-colors"
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span className="font-black text-sm w-8 text-center">{ing.selectedQuantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(ing.id, 1)}
-                            className="text-primary hover:bg-primary/10 p-1 rounded-md transition-colors"
-                          >
-                            <Plus size={16} />
-                          </button>
+                        <div className="flex flex-col items-end gap-2">
+                          {/* Prix de l'ingrédient */}
+                          {ing.selected && (
+                            <div className="text-right">
+                              {ing.pricePerUnit !== undefined && ing.pricePerUnit !== null ? (
+                                <p className="text-sm font-black text-primary">
+                                  {(ing.selectedQuantity * ing.pricePerUnit).toLocaleString()} F
+                                </p>
+                              ) : (
+                                <p className="text-xs text-dark/40 italic">Prix calculé</p>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Contrôles de quantité */}
+                          <div className="flex items-center gap-3 bg-white px-3 py-2 rounded-xl border border-beige shadow-sm">
+                            <button 
+                              onClick={() => updateQuantity(ing.id, -1)}
+                              className="text-primary hover:bg-primary/10 p-1 rounded-md transition-colors"
+                            >
+                              <Minus size={16} />
+                            </button>
+                            <span className="font-black text-sm w-8 text-center">{ing.selectedQuantity}</span>
+                            <button 
+                              onClick={() => updateQuantity(ing.id, 1)}
+                              className="text-primary hover:bg-primary/10 p-1 rounded-md transition-colors"
+                            >
+                              <Plus size={16} />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
 
                   <div className="pt-8 border-t border-beige">
+                    {/* Prix de base de la recette */}
+                    <div className="flex justify-between items-center mb-3 pb-3 border-b border-beige/50">
+                      <p className="text-dark/60 font-bold text-sm">Prix de base</p>
+                      <p className="text-xl font-black text-dark">{recipe.price.toLocaleString()} F CFA</p>
+                    </div>
+                    
+                    {/* Prix personnalisé */}
                     <div className="flex justify-between items-center mb-6">
                       <p className="text-dark/40 font-bold uppercase tracking-widest">Total Personnalisé</p>
-                      <p className="text-3xl font-black text-primary">{totalPrice.toLocaleString()} F CFA</p>
+                      <p className="text-3xl font-black text-primary">{roundedTotalPrice.toLocaleString()} F CFA</p>
                     </div>
+                    
+                    {/* Indication si le prix a changé */}
+                    {Math.abs(roundedTotalPrice - recipe.price) > 1 && (
+                      <div className={`mb-4 p-3 rounded-xl text-xs font-bold text-center ${
+                        roundedTotalPrice > recipe.price 
+                          ? 'bg-orange-50 text-orange-700 border border-orange-200' 
+                          : 'bg-green-50 text-green-700 border border-green-200'
+                      }`}>
+                        {roundedTotalPrice > recipe.price 
+                          ? `+${(roundedTotalPrice - recipe.price).toLocaleString()} F par rapport au prix de base`
+                          : `-${(recipe.price - roundedTotalPrice).toLocaleString()} F par rapport au prix de base`
+                        }
+                      </div>
+                    )}
                     <button 
                       onClick={handleAddToCart}
                       disabled={totalPrice === 0}

@@ -11,10 +11,12 @@ import {
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { HOW_IT_WORKS, RECIPES } from '../constants';
+import { HOW_IT_WORKS } from '../constants';
+import { Recipe } from '../types';
 
 interface HomeProps {
   onNavigate: (page: string, params?: any) => void;
+  recipes?: Recipe[];
 }
 
 const TESTIMONIALS = [
@@ -97,7 +99,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) 
   </div>
 );
 
-const Home: React.FC<HomeProps> = ({ onNavigate }) => {
+const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
   const [openFAQIndex, setOpenFAQIndex] = useState<number | null>(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -111,7 +113,11 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const infiniteRecipes = [...RECIPES, ...RECIPES, ...RECIPES, ...RECIPES];
+  // Utiliser les recettes de Supabase, ou un tableau vide si pas encore chargées
+  // Répéter les recettes pour créer un effet de carrousel infini
+  const infiniteRecipes = recipes.length > 0 
+    ? [...recipes, ...recipes, ...recipes, ...recipes]
+    : [];
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -289,8 +295,13 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </div>
 
         <div className="relative">
-          <div ref={scrollRef} onMouseEnter={() => setIsCarouselPaused(true)} onMouseLeave={() => setIsCarouselPaused(false)} className="flex gap-8 overflow-x-hidden pb-16 px-6 md:px-10">
-            {infiniteRecipes.map((recipe, index) => (
+          {infiniteRecipes.length === 0 ? (
+            <div className="text-center py-16 text-dark/40">
+              <p className="text-sm font-medium">Chargement des recettes...</p>
+            </div>
+          ) : (
+            <div ref={scrollRef} onMouseEnter={() => setIsCarouselPaused(true)} onMouseLeave={() => setIsCarouselPaused(false)} className="flex gap-8 overflow-x-hidden pb-16 px-6 md:px-10">
+              {infiniteRecipes.map((recipe, index) => (
               <motion.div 
                 key={`${recipe.id}-${index}`} 
                 whileHover={{ scale: 1.02 }}
@@ -321,8 +332,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
                   </div>
                 </div>
               </motion.div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

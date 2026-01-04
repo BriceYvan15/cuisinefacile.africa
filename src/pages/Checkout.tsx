@@ -1,33 +1,72 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CreditCard, Truck, ShieldCheck, Trash2, ArrowLeft } from 'lucide-react';
 import { CartItem } from '../types';
+import { validateEmailFormat, checkEmailExists } from '../lib/supabase';
 
 interface CheckoutProps {
   cart: CartItem[];
   onRemoveFromCart: (id: string) => void;
-  onPlaceOrder: (userData: { email: string; phone: string; name: string }) => void;
+  onPlaceOrder: (userData: { email: string; phone: string; name: string; address: string }) => void;
   onNavigate: (page: string) => void;
+  onEmailChange?: (email: string) => void; // Callback quand l'email change
 }
 
-const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrder, onNavigate }) => {
+const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrder, onNavigate, onEmailChange }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     address: '',
-    acceptedAccount: false,
+    acceptedAccount: true, // Coché par défaut
+    paymentMethod: 'delivery' as 'delivery' | 'card', // Paiement à la livraison par défaut
   });
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [isValidatingEmail, setIsValidatingEmail] = useState(false);
+  const emailDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const subtotal = cart.reduce((acc, item) => acc + (item.recipe.price * item.quantity), 0);
+  const subtotal = cart.reduce((acc, item) => acc + (item.totalPrice * item.quantity), 0);
   const deliveryFee = 1500;
   const total = subtotal + deliveryFee;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.acceptedAccount) {
-      onPlaceOrder({ email: formData.email, phone: formData.phone, name: formData.name });
+    
+    // Valider l'email avant de soumettre
+    const trimmedEmail = formData.email.trim();
+    if (!trimmedEmail) {
+      setEmailError('L\'email est requis');
+      return;
+    }
+
+    if (!validateEmailFormat(trimmedEmail)) {
+      setEmailError('Format d\'email invalide');
+      return;
+    }
+
+    // Vérifier si l'email existe déjà
+    setIsValidatingEmail(true);
+    try {
+      const exists = await checkEmailExists(trimmedEmail);
+      if (exists) {
+        // L'email existe déjà, c'est OK (l'utilisateur utilisera son compte existant)
+        // Pas d'erreur, on continue
+      }
+    } catch (error) {
+      console.error('Error checking email:', error);
+      // En cas d'erreur, on continue quand même
+    } finally {
+      setIsValidatingEmail(false);
+    }
+
+    if (formData.acceptedAccount && formData.address.trim() && !emailError) {
+      onPlaceOrder({ 
+        email: trimmedEmail, 
+        phone: formData.phone, 
+        name: formData.name,
+        address: formData.address
+      });
     }
   };
 
@@ -81,10 +120,72 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrde
                   required
                   type="email" 
                   placeholder="jean@example.com"
-                  className="w-full p-4 rounded-xl bg-beige border-none focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                  className={`w-full p-4 rounded-xl bg-beige border-none focus:ring-2 focus:outline-none transition-all ${
+                    emailError ? 'focus:ring-red-500/20 border-2 border-red-200' : 'focus:ring-primary/20'
+                  }`}
                   value={formData.email}
-                  onChange={e => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => {
+                    const emailValue = e.target.value;
+                    setFormData({...formData, email: emailValue});
+                    setEmailError(null);
+
+                    // Annuler le debounce précédent
+                    if (emailDebounceRef.current) {
+                      clearTimeout(emailDebounceRef.current);
+                    }
+
+                    // Valider et sauvegarder seulement si l'email est valide et complet
+                    if (emailValue.trim()) {
+                      // Vérifier le format de l'email
+                      if (!validateEmailFormat(emailValue.trim())) {
+                        // Email invalide, ne pas sauvegarder encore
+                        return;
+                      }
+
+                      // Email valide, sauvegarder avec debounce (2 secondes après la dernière frappe)
+                      emailDebounceRef.current = setTimeout(() => {
+                        const trimmedEmail = emailValue.trim();
+                        if (trimmedEmail && validateEmailFormat(trimmedEmail)) {
+                          localStorage.setItem('checkout_email', trimmedEmail);
+                          // Notifier le parent pour sauvegarder le panier
+                          if (onEmailChange) {
+                            onEmailChange(trimmedEmail);
+                          }
+                        }
+                      }, 2000);
+                    } else {
+                      localStorage.removeItem('checkout_email');
+                    }
+                  }}
+                  onBlur={async () => {
+                    // Valider l'email quand l'utilisateur quitte le champ
+                    const trimmedEmail = formData.email.trim();
+                    if (trimmedEmail) {
+                      if (!validateEmailFormat(trimmedEmail)) {
+                        setEmailError('Format d\'email invalide');
+                        return;
+                      }
+
+                      // Vérifier si l'email existe déjà (pour information)
+                      setIsValidatingEmail(true);
+                      try {
+                        const exists = await checkEmailExists(trimmedEmail);
+                        // Si l'email existe déjà, c'est OK (l'utilisateur pourra utiliser son compte existant)
+                        // Pas d'erreur, on laisse continuer
+                      } catch (error) {
+                        console.error('Error checking email:', error);
+                      } finally {
+                        setIsValidatingEmail(false);
+                      }
+                    }
+                  }}
                 />
+                {emailError && (
+                  <p className="text-xs text-red-600 font-bold mt-1">{emailError}</p>
+                )}
+                {isValidatingEmail && (
+                  <p className="text-xs text-dark/40 mt-1">Vérification de l'email...</p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-dark/70 ml-1">Téléphone</label>
@@ -116,13 +217,18 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrde
               Paiement & Compte
             </h2>
             
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <button className="flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-primary bg-primary/5 font-bold text-primary">
-                <CreditCard /> Carte / Mobile
-              </button>
-              <button className="flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-beige bg-white font-bold text-dark/40 hover:border-dark/10 transition-colors">
-                À la livraison
-              </button>
+            {/* Méthode de paiement - Paiement à la livraison uniquement */}
+            <div className="mb-8">
+              <div className="bg-primary/5 border-2 border-primary rounded-2xl p-6 flex items-center justify-center gap-3">
+                <Truck className="text-primary" size={24} />
+                <div className="text-center">
+                  <p className="font-bold text-primary text-lg">Paiement à la livraison</p>
+                  <p className="text-sm text-dark/60 mt-1">Vous paierez lors de la réception de votre commande</p>
+                </div>
+              </div>
+              <p className="text-xs text-dark/40 text-center mt-3 italic">
+                Les paiements par carte et mobile money seront disponibles prochainement
+              </p>
             </div>
 
             <div className="bg-beige/50 p-6 rounded-2xl border border-beige">
@@ -160,7 +266,17 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrde
                   </div>
                   <div className="flex-grow">
                     <h4 className="font-bold text-sm leading-tight mb-1">{item.recipe.title}</h4>
-                    <p className="text-xs text-dark/40">Qté: {item.quantity} × {item.recipe.price} F</p>
+                    <p className="text-xs text-dark/40">
+                      Qté: {item.quantity} × {item.totalPrice.toLocaleString()} F
+                      {item.totalPrice !== item.recipe.price && (
+                        <span className="ml-2 text-primary font-bold">(personnalisé)</span>
+                      )}
+                    </p>
+                    {item.selectedIngredients.length !== item.recipe.ingredients.length && (
+                      <p className="text-[10px] text-dark/30 mt-1">
+                        {item.selectedIngredients.length}/{item.recipe.ingredients.length} ingrédients
+                      </p>
+                    )}
                   </div>
                   <button 
                     onClick={() => onRemoveFromCart(item.recipe.id)}
@@ -192,11 +308,11 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrde
             <button 
               form="checkout-form"
               type="submit"
-              disabled={!formData.acceptedAccount}
-              className={`w-full mt-10 py-5 rounded-2xl font-bold text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${formData.acceptedAccount ? 'bg-accent text-white shadow-accent/20 hover:bg-orange-600' : 'bg-dark/10 text-dark/30 cursor-not-allowed'}`}
+              disabled={!formData.acceptedAccount || !formData.address.trim()}
+              className={`w-full mt-10 py-5 rounded-2xl font-bold text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${formData.acceptedAccount && formData.address.trim() ? 'bg-accent text-white shadow-accent/20 hover:bg-orange-600' : 'bg-dark/10 text-dark/30 cursor-not-allowed'}`}
             >
               <ShieldCheck size={24} />
-              Payer & Commander
+              Payer
             </button>
             <p className="text-center text-[10px] text-dark/30 mt-4 uppercase tracking-widest font-bold">Paiement sécurisé par SSL</p>
           </div>

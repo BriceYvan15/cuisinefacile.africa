@@ -4,7 +4,7 @@ export interface Ingredient {
   name: string;
   unit: string;
   quantity: number;
-  pricePerUnit: number;
+  pricePerUnit?: number; // Optionnel : peut être undefined si le prix n'est pas disponible
   image?: string;
 }
 
@@ -52,4 +52,5 @@ export interface User {
   email: string;
   phone: string;
   name: string;
+  role?: 'user' | 'admin'; // Rôle de l'utilisateur (par défaut: 'user')
 }

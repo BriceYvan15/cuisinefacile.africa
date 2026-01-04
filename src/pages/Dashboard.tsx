@@ -16,15 +16,19 @@ import {
   CreditCard,
   MapPin,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  RefreshCw
 } from 'lucide-react';
 import { Order, User } from '../types';
+import { isAdmin } from '../lib/supabase';
+import { Shield } from 'lucide-react';
 
 interface DashboardProps {
   user: User | null;
   orders: Order[];
   onLogout: () => void;
   onNavigate: (page: string) => void;
+  onRefreshOrders?: () => Promise<void>;
 }
 
 const OrderDetailView: React.FC<{ order: Order; onBack: () => void }> = ({ order, onBack }) => (
@@ -122,8 +126,9 @@ const OrderDetailView: React.FC<{ order: Order; onBack: () => void }> = ({ order
   </motion.div>
 );
 
-const Dashboard: React.FC<DashboardProps> = ({ user, orders, onLogout, onNavigate }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, orders, onLogout, onNavigate, onRefreshOrders }) => {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   if (!user) {
     return (
@@ -133,12 +138,20 @@ const Dashboard: React.FC<DashboardProps> = ({ user, orders, onLogout, onNavigat
         </div>
         <h2 className="text-3xl font-bold mb-4 tracking-tight">Connectez-vous</h2>
         <p className="text-dark/60 mb-8 text-sm">Votre compte est créé automatiquement lors de votre première commande.</p>
-        <button 
-          onClick={() => onNavigate('recipes')}
-          className="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-primary/20"
-        >
-          Commander maintenant
-        </button>
+        <div className="flex flex-col gap-3">
+          <button 
+            onClick={() => onNavigate('login')}
+            className="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-primary/20"
+          >
+            Se connecter
+          </button>
+          <button 
+            onClick={() => onNavigate('recipes')}
+            className="w-full bg-beige text-dark/70 py-4 rounded-2xl font-bold"
+          >
+            Commander maintenant
+          </button>
+        </div>
       </div>
     );
   }
@@ -177,6 +190,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, orders, onLogout, onNavigat
               >
                 <Package size={18} /> Commandes
               </button>
+              {isAdmin(user) && (
+                <button 
+                  onClick={() => onNavigate('admin')}
+                  className="flex items-center gap-3 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-primary bg-primary/10 hover:bg-primary/20 transition-all"
+                >
+                  <Shield size={18} /> Admin
+                </button>
+              )}
               <button className="flex items-center gap-3 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-dark/40 hover:bg-beige transition-all">
                 <Settings size={18} /> Profil
               </button>
@@ -217,9 +238,26 @@ const Dashboard: React.FC<DashboardProps> = ({ user, orders, onLogout, onNavigat
                 </div>
 
                 <section>
-                  <h3 className="text-lg font-black mb-6 flex items-center gap-2">
-                    Historique <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">{orders.length}</span>
-                  </h3>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-black flex items-center gap-2">
+                      Historique <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">{orders.length}</span>
+                    </h3>
+                    {onRefreshOrders && (
+                      <button
+                        onClick={async () => {
+                          setRefreshing(true);
+                          await onRefreshOrders();
+                          setRefreshing(false);
+                        }}
+                        disabled={refreshing}
+                        className="flex items-center gap-2 px-4 py-2 bg-beige hover:bg-beige/80 text-dark/70 rounded-xl font-bold text-xs transition-all disabled:opacity-50"
+                        title="Actualiser les commandes"
+                      >
+                        <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+                        Actualiser
+                      </button>
+                    )}
+                  </div>
                   
                   {orders.length === 0 ? (
                     <div className="bg-white py-16 px-8 rounded-[2.5rem] text-center border-2 border-dashed border-beige">

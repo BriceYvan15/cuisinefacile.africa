@@ -1,26 +1,28 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Search, Filter, Clock, Flame, Eye } from 'lucide-react';
-import { RECIPES } from '../constants';
+import { ShoppingCart, Search, Filter, Clock, Flame, Eye, Loader2, RefreshCw } from 'lucide-react';
 import { Recipe } from '../types';
 
 interface RecipesProps {
+  recipes: Recipe[];
+  loading: boolean;
   onAddToCart: (recipe: Recipe) => void;
   onNavigate: (page: string, params?: any) => void;
+  onRefresh?: () => void;
 }
 
-const Recipes: React.FC<RecipesProps> = ({ onAddToCart, onNavigate }) => {
+const Recipes: React.FC<RecipesProps> = ({ recipes, loading, onAddToCart, onNavigate, onRefresh }) => {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
 
-  const filteredRecipes = RECIPES.filter(recipe => {
+  const filteredRecipes = recipes.filter(recipe => {
     const matchesFilter = filter === 'All' || recipe.category === filter;
     const matchesSearch = recipe.title.toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  const categories = ['All', ...Array.from(new Set(RECIPES.map(r => r.category)))];
+  const categories = ['All', ...Array.from(new Set(recipes.map(r => r.category)))];
 
   return (
     <div className="pt-28 pb-20 container mx-auto px-4 md:px-6">
@@ -60,9 +62,37 @@ const Recipes: React.FC<RecipesProps> = ({ onAddToCart, onNavigate }) => {
         ))}
       </div>
 
+      {/* Loading State - Seulement au premier chargement */}
+      {loading && recipes.length === 0 && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <span className="ml-3 text-dark/60">Chargement des recettes...</span>
+        </div>
+      )}
+
+      {/* Bouton de rafraîchissement (optionnel) */}
+      {!loading && recipes.length > 0 && onRefresh && (
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={onRefresh}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-dark/60 hover:text-primary transition-colors"
+            title="Rafraîchir les recettes"
+          >
+            <RefreshCw size={14} />
+            Actualiser
+          </button>
+        </div>
+      )}
+
       {/* Recipe Grid - Plus compact */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredRecipes.map((recipe, index) => (
+      {(!loading || recipes.length > 0) && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredRecipes.length === 0 ? (
+            <div className="col-span-full text-center py-20">
+              <p className="text-dark/60 font-bold">Aucune recette trouvée.</p>
+            </div>
+          ) : (
+            filteredRecipes.map((recipe, index) => (
           <motion.div
             key={recipe.id}
             initial={{ opacity: 0, y: 20 }}
@@ -116,8 +146,10 @@ const Recipes: React.FC<RecipesProps> = ({ onAddToCart, onNavigate }) => {
               </div>
             </div>
           </motion.div>
-        ))}
-      </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };
