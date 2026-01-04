@@ -400,9 +400,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-beige selection:bg-primary/20">
+    <div className="min-h-screen bg-beige selection:bg-primary/20 overflow-x-hidden max-w-full">
       <Header onNavigate={handleNavigate} currentPage={currentPage} cartCount={cart.length} />
-      <main className="min-h-[80vh]">
+      <main className="min-h-[80vh] overflow-x-hidden max-w-full">
         <AnimatePresence mode="wait">
           <motion.div key={currentPage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             {renderPage()}

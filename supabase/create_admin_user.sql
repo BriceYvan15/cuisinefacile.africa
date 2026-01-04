@@ -12,7 +12,7 @@ ALTER TABLE users
 INSERT INTO users (email, phone, name, role)
 VALUES (
   'admin@cuisinefacile.africa',
-  '+2250000000000', -- Remplacez par le numéro de téléphone réel si nécessaire
+  '+2250709302481', -- Remplacez par le numéro de téléphone réel si nécessaire
   'Administrateur',
   'admin'
 )

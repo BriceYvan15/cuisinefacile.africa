@@ -101,7 +101,7 @@ const Recipes: React.FC<RecipesProps> = ({ recipes, loading, onAddToCart, onNavi
             className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-beige/50"
           >
             <div className="relative h-48 overflow-hidden">
-              <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <img src={recipe.image} alt={recipe.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute top-3 left-3">
                 <span className="bg-white/95 backdrop-blur px-3 py-1 rounded-full text-[8px] font-black text-primary uppercase tracking-widest shadow-sm">
                   {recipe.category}

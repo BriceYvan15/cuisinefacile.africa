@@ -64,7 +64,7 @@ const OrderDetailView: React.FC<{ order: Order; onBack: () => void }> = ({ order
           {order.items.map((item, idx) => (
             <div key={idx} className="p-6 rounded-[2rem] bg-beige/30 border border-beige/50 space-y-4">
               <div className="flex items-center gap-5">
-                <img src={item.recipe.image} alt={item.recipe.title} className="w-16 h-16 rounded-2xl object-cover shrink-0 shadow-sm" />
+                <img src={item.recipe.image} alt={item.recipe.title} loading="lazy" className="w-16 h-16 rounded-2xl object-cover shrink-0 shadow-sm" />
                 <div className="flex-grow">
                   <p className="text-base font-black text-dark leading-tight">{item.recipe.title}</p>
                   <p className="text-[10px] text-primary font-black uppercase mt-1">Box pour {item.quantity} personne(s)</p>

@@ -48,13 +48,13 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
       variants={headerVariants}
       initial="initial"
       animate="animate"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 overflow-x-hidden max-w-full ${
         shouldShowGlassEffect 
           ? 'bg-white/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] py-3' 
           : 'bg-transparent py-8'
       }`}
     >
-      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between max-w-full">
         
         {/* Logo Badge Signature */}
         <motion.div 

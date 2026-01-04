@@ -262,7 +262,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onRemoveFromCart, onPlaceOrde
               {cart.map((item) => (
                 <div key={item.recipe.id} className="flex gap-4 group">
                   <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0">
-                    <img src={item.recipe.image} className="w-full h-full object-cover" alt={item.recipe.title} />
+                    <img src={item.recipe.image} className="w-full h-full object-cover" alt={item.recipe.title} loading="lazy" />
                   </div>
                   <div className="flex-grow">
                     <h4 className="font-bold text-sm leading-tight mb-1">{item.recipe.title}</h4>

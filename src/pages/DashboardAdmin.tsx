@@ -332,7 +332,7 @@ const DashboardAdmin: React.FC<DashboardAdminProps> = ({ onLogout, onNavigate, o
                             <div className="space-y-2">
                               {order.items.slice(0, 2).map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-3 p-2 bg-beige rounded-xl">
-                                  <img src={item.recipe.image} alt={item.recipe.title} className="w-12 h-12 rounded-lg object-cover" />
+                                  <img src={item.recipe.image} alt={item.recipe.title} loading="lazy" className="w-12 h-12 rounded-lg object-cover" />
                                   <div className="flex-1">
                                     <p className="font-bold text-sm">{item.recipe.title}</p>
                                     <p className="text-xs text-dark/60">x{item.quantity} - {item.totalPrice.toLocaleString()} FCFA</p>
@@ -425,7 +425,7 @@ const DashboardAdmin: React.FC<DashboardAdminProps> = ({ onLogout, onNavigate, o
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-2xl shadow-lg overflow-hidden"
                       >
-                        <img src={recipe.image} alt={recipe.title} className="w-full h-48 object-cover" />
+                        <img src={recipe.image} alt={recipe.title} loading="lazy" className="w-full h-48 object-cover" />
                         <div className="p-4">
                           <h3 className="font-black text-lg mb-2">{recipe.title}</h3>
                           <p className="text-sm text-dark/60 mb-3">{recipe.description}</p>

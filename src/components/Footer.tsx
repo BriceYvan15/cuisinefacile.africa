@@ -12,8 +12,8 @@ const TikTokIcon: React.FC<{ size?: number }> = ({ size = 18 }) => (
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-dark text-white pt-16 pb-8">
-      <div className="container mx-auto px-4 md:px-6">
+    <footer className="bg-dark text-white pt-16 pb-8 overflow-x-hidden max-w-full">
+      <div className="container mx-auto px-4 md:px-6 max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="space-y-4">

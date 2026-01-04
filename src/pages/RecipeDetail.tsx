@@ -163,7 +163,7 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe: initialRecipe, reci
             className="space-y-8"
           >
             <div className="relative aspect-[4/3] rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
-              <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+              <img src={recipe.image} alt={recipe.title} loading="eager" className="w-full h-full object-cover" />
               <div className="absolute top-6 left-6 bg-white/95 backdrop-blur px-4 py-2 rounded-full text-xs font-black text-primary uppercase tracking-widest shadow-lg">
                 {recipe.category}
               </div>

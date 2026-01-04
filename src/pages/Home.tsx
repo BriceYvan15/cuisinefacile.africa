@@ -70,15 +70,15 @@ interface FAQItemProps {
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) => (
-  <div className={`border-b border-beige transition-all ${isOpen ? 'bg-white' : ''}`}>
+  <div className={`border-b border-beige transition-all ${isOpen ? 'bg-white' : ''} w-full max-w-full`}>
     <button 
       onClick={onClick}
-      className="w-full py-4 sm:py-5 px-3 sm:px-4 flex items-center justify-between text-left group"
+      className="w-full py-4 sm:py-5 px-3 sm:px-4 flex items-center justify-between text-left group min-w-0"
     >
-      <span className={`text-xs sm:text-sm font-bold tracking-tight transition-colors ${isOpen ? 'text-primary' : 'text-dark/80 group-hover:text-primary'}`}>
+      <span className={`text-xs sm:text-sm font-bold tracking-tight transition-colors min-w-0 flex-1 pr-2 break-words ${isOpen ? 'text-primary' : 'text-dark/80 group-hover:text-primary'}`}>
         {question}
       </span>
-      <div className={`shrink-0 ml-3 sm:ml-4 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : 'text-dark/20'}`}>
+      <div className={`shrink-0 ml-3 sm:ml-4 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180 text-primary' : 'text-dark/20'}`}>
         {isOpen ? <Minus size={16} /> : <Plus size={16} />}
       </div>
     </button>
@@ -88,9 +88,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) 
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          className="overflow-hidden"
+          className="overflow-hidden w-full"
         >
-          <div className="px-3 sm:px-4 pb-4 sm:pb-6 text-xs leading-relaxed text-dark/50 font-medium">
+          <div className="px-3 sm:px-4 pb-4 sm:pb-6 text-xs leading-relaxed text-dark/50 font-medium break-words">
             {answer}
           </div>
         </motion.div>
@@ -165,7 +165,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
   };
 
   return (
-    <div className="flex flex-col gap-16 pb-20 bg-beige">
+    <div className="flex flex-col gap-16 pb-20 bg-beige overflow-x-hidden max-w-full">
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
@@ -240,7 +240,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
       </section>
 
       {/* Comment ça marche */}
-      <section id="how-it-works" className="container mx-auto px-4 md:px-6 py-10">
+      <section id="how-it-works" className="container mx-auto px-4 md:px-6 py-10 overflow-x-hidden max-w-full">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -274,8 +274,8 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
       </section>
 
       {/* Carousel Recettes - TAILLE RÉDUITE MAINTENUE */}
-      <section className="bg-white py-24 overflow-hidden border-y border-beige/50">
-        <div className="container mx-auto px-4 md:px-6 mb-16 flex flex-col md:flex-row items-center md:items-end justify-between gap-6">
+      <section className="bg-white py-24 overflow-hidden border-y border-beige/50 w-full max-w-full">
+        <div className="container mx-auto px-4 md:px-6 mb-16 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 max-w-full">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -300,7 +300,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
               <p className="text-sm font-medium">Chargement des recettes...</p>
             </div>
           ) : (
-            <div ref={scrollRef} onMouseEnter={() => setIsCarouselPaused(true)} onMouseLeave={() => setIsCarouselPaused(false)} className="flex gap-8 overflow-x-hidden pb-16 px-6 md:px-10">
+            <div ref={scrollRef} onMouseEnter={() => setIsCarouselPaused(true)} onMouseLeave={() => setIsCarouselPaused(false)} className="flex gap-8 overflow-x-hidden pb-16 px-4 sm:px-6 md:px-10 max-w-full">
               {infiniteRecipes.map((recipe, index) => (
               <motion.div 
                 key={`${recipe.id}-${index}`} 
@@ -311,6 +311,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
                   <img 
                     src={recipe.image} 
                     alt={recipe.title} 
+                    loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1.5s]" 
                     style={{ objectFit: 'cover', objectPosition: 'center' }}
                   />
@@ -339,20 +340,20 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
       </section>
 
       {/* FAQ & Témoignages */}
-      <section className="w-full px-2 sm:px-4 md:px-6 py-10 sm:py-12 md:py-16">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20">
+      <section className="w-full px-4 sm:px-4 md:px-6 py-10 sm:py-12 md:py-16 overflow-x-hidden max-w-full">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20 w-full">
           {/* Section FAQ */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full mx-auto px-1 sm:px-2"
+            className="w-full mx-auto min-w-0"
           >
-            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8 min-w-0">
               <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-primary text-white rounded-2xl sm:rounded-3xl md:rounded-[1.5rem] flex-shrink-0 flex items-center justify-center shadow-xl shadow-primary/20">
                 <HelpCircle className="w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7" />
               </div>
-              <h2 className="text-xl sm:text-2xl md:text-4xl font-black tracking-tight text-dark">Questions fréquentes</h2>
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-black tracking-tight text-dark min-w-0 flex-shrink">Questions fréquentes</h2>
             </div>
             <div className="bg-white rounded-2xl sm:rounded-3xl md:rounded-[3.5rem] shadow-lg border border-beige overflow-hidden w-full max-w-full">
               {FAQ_DATA.map((item, index) => (
@@ -372,17 +373,17 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full max-w-2xl mx-auto lg:max-w-none"
+            className="w-full max-w-2xl mx-auto lg:max-w-none min-w-0"
           >
-            <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-accent text-white rounded-3xl md:rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-accent/20">
+            <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12 min-w-0">
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-accent text-white rounded-3xl md:rounded-[1.5rem] flex-shrink-0 flex items-center justify-center shadow-xl shadow-accent/20">
                 <Star className="w-6 h-6 md:w-8 md:h-8" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark">Avis de nos chefs</h2>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark min-w-0 flex-shrink">Avis de nos chefs</h2>
             </div>
           
             {/* Carrousel pour mobile */}
-            <div className="md:hidden">
+            <div className="md:hidden w-full max-w-full overflow-hidden">
               <Slider 
                 dots={true}
                 infinite={true}
@@ -392,31 +393,31 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
                 arrows={false}
                 autoplay={true}
                 autoplaySpeed={5000}
-                className="pb-10"
+                className="pb-10 w-full"
                 dotsClass="slick-dots !bottom-0"
               >
                 {TESTIMONIALS.map((t, i) => (
-                  <div key={i} className="px-2">
-                    <div className="bg-white p-6 rounded-3xl border border-beige flex gap-4 items-start shadow-sm">
+                  <div key={i} className="px-2 max-w-full">
+                    <div className="bg-white p-6 rounded-3xl border border-beige flex gap-4 items-start shadow-sm w-full max-w-full min-w-0">
                       <img 
                         src={t.avatar} 
                         className="w-12 h-12 rounded-2xl border-2 border-beige object-cover shadow-lg" 
                         alt={t.name} 
                       />
-                      <div className="space-y-2">
-                        <div className="flex gap-1">
+                      <div className="space-y-2 min-w-0 flex-1">
+                        <div className="flex gap-1 flex-wrap">
                           {[...Array(5)].map((_, s) => (
                             <Star 
                               key={s} 
                               size={12} 
-                              className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3`} 
+                              className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3 flex-shrink-0`} 
                             />
                           ))}
                         </div>
-                        <p className="text-sm font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                        <p className="text-sm font-medium text-dark/80 italic leading-relaxed break-words">"{t.content}"</p>
                         <div>
-                          <p className="text-xs font-black uppercase text-dark tracking-wider">{t.name}</p>
-                          <p className="text-[10px] font-bold text-primary uppercase mt-0.5 tracking-tight">{t.role}</p>
+                          <p className="text-xs font-black uppercase text-dark tracking-wider break-words">{t.name}</p>
+                          <p className="text-[10px] font-bold text-primary uppercase mt-0.5 tracking-tight break-words">{t.role}</p>
                         </div>
                       </div>
                     </div>
@@ -466,7 +467,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 md:px-6 py-16">
+      <section className="container mx-auto px-4 md:px-6 py-16 overflow-x-hidden max-w-full">
         <motion.div 
           whileInView={{ scale: [0.95, 1], opacity: [0, 1] }}
           className="bg-primary rounded-[4rem] p-16 md:p-24 text-center relative overflow-hidden text-white shadow-[0_40px_100px_rgba(139,29,29,0.25)]"
