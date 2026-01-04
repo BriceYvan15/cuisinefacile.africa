@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ShoppingBag, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 
@@ -12,12 +12,25 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(80);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (headerRef.current) {
+      const updateHeaderHeight = () => {
+        setHeaderHeight(headerRef.current?.offsetHeight || 80);
+      };
+      updateHeaderHeight();
+      window.addEventListener('resize', updateHeaderHeight);
+      return () => window.removeEventListener('resize', updateHeaderHeight);
+    }
+  }, [isScrolled, isMobileMenuOpen]);
 
   const navLinks = [
     { name: 'Accueil', id: 'home' },
@@ -45,10 +58,11 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
 
   return (
     <motion.header 
+      ref={headerRef}
       variants={headerVariants}
       initial="initial"
       animate="animate"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 overflow-x-hidden max-w-full ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 overflow-visible max-w-full ${
         shouldShowGlassEffect 
           ? 'bg-white/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] py-3' 
           : 'bg-transparent py-8'
@@ -86,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
         <nav className={`hidden md:flex items-center gap-10 px-10 py-3.5 rounded-2xl transition-all duration-700 ${
           shouldShowGlassEffect 
             ? 'bg-white/10 backdrop-blur-md shadow-lg'
-            : 'bg-white/10 backdrop-blur-md'
+            : 'bg-black/20 backdrop-blur-md shadow-lg'
         }`}>
           {navLinks.map((link) => (
             <button
@@ -97,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
                   ? 'text-accent font-bold' 
                   : shouldShowGlassEffect 
                     ? 'text-dark hover:text-accent/90' 
-                    : 'text-white hover:text-accent/80'
+                    : 'text-white hover:text-accent/80 drop-shadow-lg'
               }`}
             >
               {link.name}
@@ -114,14 +128,14 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
           <div className={`flex items-center gap-1.5 p-1.5 rounded-2xl transition-all duration-700 ${
             shouldShowGlassEffect 
               ? 'bg-white/10 backdrop-blur-md shadow-lg' 
-              : 'bg-white/10 backdrop-blur-md'
+              : 'bg-black/20 backdrop-blur-md shadow-lg'
           }`}>
             <button 
               onClick={() => onNavigate('dashboard')}
               className={`p-3 rounded-xl transition-all ${
                 shouldShowGlassEffect 
                   ? 'text-dark hover:bg-white/20 hover:text-primary' 
-                  : 'text-white hover:bg-white/20'
+                  : 'text-white hover:bg-white/20 drop-shadow-lg'
               }`}
             >
               <UserIcon size={20} />
@@ -131,7 +145,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
               className={`p-3 rounded-xl transition-all relative ${
                 shouldShowGlassEffect 
                   ? 'text-dark hover:bg-white/20 hover:text-primary' 
-                  : 'text-white hover:bg-white/20'
+                  : 'text-white hover:bg-white/20 drop-shadow-lg'
               }`}
             >
               <ShoppingBag size={20} />
@@ -173,7 +187,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
             className={`md:hidden p-3 rounded-2xl transition-all ${
               shouldShowGlassEffect 
                 ? 'text-dark hover:bg-white/20' 
-                : 'text-white hover:bg-white/10'
+                : 'text-white hover:bg-white/10 drop-shadow-lg bg-black/20 backdrop-blur-sm'
             }`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -185,48 +199,61 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, cartCount }) =
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white/95 backdrop-blur-xl border-t border-white/20 overflow-hidden shadow-2xl absolute top-full left-0 right-0"
-            style={{
-              background: 'rgba(255, 255, 255, 0.98)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)'
-            }}
-          >
-            <div className="container mx-auto px-6 py-8 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <motion.button
-                  key={link.id}
+          <>
+            {/* Overlay pour fermer le menu en cliquant à l'extérieur */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="md:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-[45]"
+            />
+            
+            {/* Menu mobile */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden fixed left-0 right-0 z-[60] max-h-[calc(100vh-120px)] overflow-y-auto shadow-2xl"
+              style={{
+                top: `${headerHeight}px`,
+                background: '#FFFFFF',
+                borderTop: '1px solid rgba(245, 245, 240, 0.5)'
+              }}
+            >
+              <div className="container mx-auto px-6 py-6 flex flex-col gap-3 bg-white">
+                {navLinks.map((link) => (
+                  <motion.button
+                    key={link.id}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      onNavigate(link.id);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`text-sm font-bold uppercase tracking-wider text-left p-4 rounded-xl transition-all ${
+                      currentPage === link.id 
+                        ? 'bg-primary/10 text-primary' 
+                        : 'text-dark/80 hover:bg-gray-50'
+                    }`}
+                  >
+                    {link.name}
+                  </motion.button>
+                ))}
+                <div className="h-px bg-gray-100 my-2" />
+                <motion.button 
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
-                    onNavigate(link.id);
+                    onNavigate('recipes');
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`text-sm font-bold uppercase tracking-wider text-left p-4 rounded-xl transition-all ${
-                    currentPage === link.id 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-dark/80 hover:bg-gray-50'
-                  }`}
+                  className="w-full bg-primary text-white p-5 rounded-2xl text-center font-black text-sm uppercase tracking-wider shadow-lg hover:bg-primary/90 transition-colors"
                 >
-                  {link.name}
+                  Commander ma box
                 </motion.button>
-              ))}
-              <div className="h-px bg-gray-100 my-4" />
-              <motion.button 
-                whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  onNavigate('recipes');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full bg-primary text-white p-5 rounded-2xl text-center font-black text-sm uppercase tracking-wider shadow-lg hover:bg-primary/90 transition-colors"
-              >
-                Commander ma box
-              </motion.button>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.header>

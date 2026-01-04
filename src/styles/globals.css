@@ -149,3 +149,21 @@ img {
     text-size-adjust: 100%;
   }
 }
+
+/* Masquer la barre de défilement tout en gardant le scroll */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE et Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari et Opera */
+}
+
+/* Améliorer le scroll horizontal sur mobile */
+@media (max-width: 768px) {
+  .no-scrollbar {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+}

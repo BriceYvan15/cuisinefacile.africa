@@ -50,14 +50,18 @@ const Recipes: React.FC<RecipesProps> = ({ recipes, loading, onAddToCart, onNavi
       </div>
 
       {/* Categories */}
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+      <div className="flex flex-wrap gap-2.5 sm:gap-3 mb-8">
         {categories.map(cat => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`whitespace-nowrap px-6 py-2 rounded-full text-xs font-black transition-all ${filter === cat ? 'bg-primary text-white shadow-md' : 'bg-white text-dark/50 hover:bg-beige'}`}
+            className={`whitespace-nowrap px-5 py-3 sm:px-6 sm:py-2 rounded-full text-sm sm:text-xs font-black transition-all min-h-[44px] sm:min-h-[36px] flex items-center justify-center shadow-sm ${
+              filter === cat 
+                ? 'bg-primary text-white shadow-md shadow-primary/30' 
+                : 'bg-white text-dark/80 hover:bg-beige border border-beige/60 hover:border-primary/30 active:scale-95'
+            }`}
           >
-            {cat.toUpperCase()}
+            <span className="tracking-wide">{cat.toUpperCase()}</span>
           </button>
         ))}
       </div>
