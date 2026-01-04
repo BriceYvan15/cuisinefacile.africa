@@ -375,59 +375,15 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
             viewport={{ once: true }}
             className="w-full max-w-2xl mx-auto lg:max-w-none min-w-0"
           >
-            <div className="flex items-center gap-4 md:gap-5 mb-8 md:mb-12 min-w-0">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-accent text-white rounded-3xl md:rounded-[1.5rem] flex-shrink-0 flex items-center justify-center shadow-xl shadow-accent/20">
-                <Star className="w-6 h-6 md:w-8 md:h-8" />
+            <div className="flex items-center gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 md:mb-12 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-accent text-white rounded-2xl sm:rounded-3xl md:rounded-[1.5rem] flex-shrink-0 flex items-center justify-center shadow-xl shadow-accent/20">
+                <Star className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark min-w-0 flex-shrink">Avis de nos chefs</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight md:tracking-tighter text-dark min-w-0 flex-shrink">Avis de nos chefs</h2>
             </div>
           
-            {/* Carrousel pour mobile */}
-            <div className="md:hidden w-full max-w-full overflow-hidden">
-              <Slider 
-                dots={true}
-                infinite={true}
-                speed={500}
-                slidesToShow={1}
-                slidesToScroll={1}
-                arrows={false}
-                autoplay={true}
-                autoplaySpeed={5000}
-                className="pb-10 w-full"
-                dotsClass="slick-dots !bottom-0"
-              >
-                {TESTIMONIALS.map((t, i) => (
-                  <div key={i} className="px-2 max-w-full">
-                    <div className="bg-white p-6 rounded-3xl border border-beige flex gap-4 items-start shadow-sm w-full max-w-full min-w-0">
-                      <img 
-                        src={t.avatar} 
-                        className="w-12 h-12 rounded-2xl border-2 border-beige object-cover shadow-lg" 
-                        alt={t.name} 
-                      />
-                      <div className="space-y-2 min-w-0 flex-1">
-                        <div className="flex gap-1 flex-wrap">
-                          {[...Array(5)].map((_, s) => (
-                            <Star 
-                              key={s} 
-                              size={12} 
-                              className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3 h-3 flex-shrink-0`} 
-                            />
-                          ))}
-                        </div>
-                        <p className="text-sm font-medium text-dark/80 italic leading-relaxed break-words">"{t.content}"</p>
-                        <div>
-                          <p className="text-xs font-black uppercase text-dark tracking-wider break-words">{t.name}</p>
-                          <p className="text-[10px] font-bold text-primary uppercase mt-0.5 tracking-tight break-words">{t.role}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </Slider>
-            </div>
-
-            {/* Liste pour desktop */}
-            <div className="hidden md:block space-y-6">
+            {/* Liste verticale pour tous les écrans */}
+            <div className="space-y-4 sm:space-y-5 md:space-y-6">
               {TESTIMONIALS.map((t, i) => (
                 <motion.div 
                   key={i}
@@ -436,27 +392,27 @@ const Home: React.FC<HomeProps> = ({ onNavigate, recipes = [] }) => {
                   viewport={{ once: true, margin: "-20% 0px" }}
                   transition={{ delay: i * 0.1 }}
                   whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.8)" }}
-                  className="bg-white p-8 rounded-[2rem] border border-beige flex gap-6 items-start shadow-sm transition-all cursor-default"
+                  className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl sm:rounded-[1.5rem] md:rounded-[2rem] border border-beige flex gap-4 sm:gap-5 md:gap-6 items-start shadow-sm transition-all cursor-default w-full max-w-full min-w-0"
                 >
                   <img 
                     src={t.avatar} 
-                    className="w-16 h-16 rounded-[1.5rem] border-4 border-beige object-cover shadow-lg" 
+                    className="w-14 h-14 sm:w-15 sm:h-15 md:w-16 md:h-16 rounded-xl sm:rounded-2xl md:rounded-[1.5rem] border-2 sm:border-3 md:border-4 border-beige object-cover shadow-lg flex-shrink-0" 
                     alt={t.name} 
                   />
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-2.5 md:space-y-3 min-w-0 flex-1">
                     <div className="flex gap-1">
                       {[...Array(5)].map((_, s) => (
                         <Star 
                           key={s} 
                           size={14} 
-                          className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3.5 h-3.5`} 
+                          className={`${s < t.stars ? 'fill-accent text-accent' : 'text-beige'} w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0`} 
                         />
                       ))}
                     </div>
-                    <p className="text-base font-medium text-dark/80 italic leading-relaxed">"{t.content}"</p>
+                    <p className="text-sm sm:text-base font-medium text-dark/80 italic leading-relaxed break-words">"{t.content}"</p>
                     <div>
-                      <p className="text-sm font-black uppercase text-dark tracking-wider">{t.name}</p>
-                      <p className="text-[11px] font-bold text-primary uppercase mt-1 tracking-tight">{t.role}</p>
+                      <p className="text-xs sm:text-sm font-black uppercase text-dark tracking-wider break-words">{t.name}</p>
+                      <p className="text-[10px] sm:text-[11px] font-bold text-primary uppercase mt-0.5 sm:mt-1 tracking-tight break-words">{t.role}</p>
                     </div>
                   </div>
                 </motion.div>
